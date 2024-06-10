@@ -1,5 +1,8 @@
-package com.rezendev.exceptions
+package com.rezendev.exceptions.handlers
 
+import com.rezendev.exceptions.ExceptionResponse
+import com.rezendev.exceptions.ResourceNotFoundException
+import com.rezendev.exceptions.UnsupportedMathOperationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -15,7 +18,7 @@ class CustomizedResponseEntityExceptionHandler: ResponseEntityExceptionHandler()
 
     @ExceptionHandler(Exception::class)
     fun handleAllExceptions(ex: Exception, request: WebRequest):
-            ResponseEntity<ExceptionResponse>{
+            ResponseEntity<ExceptionResponse> {
         val exceptionResponse = ExceptionResponse(
             Date(),
             ex.message,
@@ -27,7 +30,7 @@ class CustomizedResponseEntityExceptionHandler: ResponseEntityExceptionHandler()
 
     @ExceptionHandler(UnsupportedMathOperationException::class)
     fun handleBadRequestExceptions(ex: Exception, request: WebRequest):
-            ResponseEntity<ExceptionResponse>{
+            ResponseEntity<ExceptionResponse> {
         val exceptionResponse = ExceptionResponse(
             Date(),
             ex.message,
@@ -35,5 +38,17 @@ class CustomizedResponseEntityExceptionHandler: ResponseEntityExceptionHandler()
         )
 
         return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleResourceNotFoundExceptions(ex: Exception, request: WebRequest):
+            ResponseEntity<ExceptionResponse> {
+        val exceptionResponse = ExceptionResponse(
+            Date(),
+            ex.message,
+            request.getDescription(false)
+        )
+
+        return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND)
     }
 }
